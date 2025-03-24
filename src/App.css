@@ -19,6 +19,7 @@
   --standard-radius: 10px;
   --color-primary-gradient-start: rgb(45, 255, 160);
   --color-primary-gradient-end: rgb(72, 255, 212);
+  --border-1: #5b5862;
 }
 
 body {

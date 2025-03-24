@@ -1,0 +1,72 @@
+.main-schedule {
+    width: 1200px;
+    margin: auto;
+    height: 900px;
+    height: 800px;
+    background-color: var(--background-2);
+    border-radius: var(--standard-radius);
+    padding: 10px;
+    display: flex;
+}
+
+.main-schedule table {
+    width: calc(100% - 100px);
+    height: 100%;
+    border-collapse: collapse;
+    margin-left: auto;
+}
+
+.main-schedule th,
+.main-schedule td {
+    border: 1px solid var(--border-1);
+    padding: 8px;
+}
+
+.main-schedule th {
+    padding: 10px;
+}
+
+.main-schedule tr {
+    position: relative;
+}
+
+
+
+.main-schedule thead {
+    font-size: 18px;
+}
+
+.schedule-subjects-cards {
+    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.gantt-bar {
+    border: 1px solid black;
+    height: 60px;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: end;
+}
+
+
+.gantt-bar .green-bar {
+    background-color: green;
+    border-top-left-radius: var(--standard-radius);
+    border-bottom-left-radius: var(--standard-radius);
+
+}
+.gantt-bar .yellow-bar {
+    background-color: yellow;
+}
+.gantt-bar .red-bar {
+    background-color: red;
+}
+.gantt-bar .extreme-bar {
+    background-color: darkred;
+    border-top-right-radius: var(--standard-radius);
+    border-bottom-right-radius: var(--standard-radius);
+}

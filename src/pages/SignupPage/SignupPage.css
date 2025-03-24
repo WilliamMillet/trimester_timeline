@@ -1,6 +1,6 @@
 .signup-form-container {
     width: 600px;
-    height: 650px;
+    height: 700px;
  
 }
 
@@ -41,4 +41,8 @@
     flex-direction: column;
     gap: 20px;
     margin-top: 40px;
+}
+
+.signup-input-container {
+    height: 70px;
 }

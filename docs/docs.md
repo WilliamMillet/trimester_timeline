@@ -13,3 +13,5 @@ If any other folders need to be added feel free to add them
 ## Stretch goals
 
 - Add custom password rules
+
+- Add a cooked-o-meter

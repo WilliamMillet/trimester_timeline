@@ -1,0 +1,30 @@
+.main-navbar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+    height: 70px;
+    background-color: var(--color-primary-1);
+    padding: 20px;
+    box-shadow: var(--standard-shadow);
+    font-size: 20px;
+}
+
+.main-navbar a {
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    border-radius: var(--standard-radius);
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.logo-icon {
+    font-size: 40px;
+}
+
+.main-navbar a:hover {
+    transform: translateY(-2px);
+    background-color: rgba(0, 0, 0, 0.05);
+}

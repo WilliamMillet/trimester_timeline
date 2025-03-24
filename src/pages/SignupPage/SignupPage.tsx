@@ -161,7 +161,7 @@ const SignupPage = () => {
                         />
                     </div>
                     <Button type="submit" variant="contained" sx={{ height: "50px" }}>
-                        Send
+                        Signup
                     </Button>
                 </form>
             </section>

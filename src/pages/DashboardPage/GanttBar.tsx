@@ -18,7 +18,17 @@ const GanttBar = ({avgWeeksToDo, dueDate, releaseDate}: GanttBarProps) => {
             <div className="green-bar bar-section" style={{ width: `${barLength * 100}%` }}></div>
             <div className="yellow-bar bar-section" style={{ width: `${barLength * 100}%` }}></div>
             <div className="red-bar bar-section" style={{ width: `${barLength * 100}%` }}></div>
-            <div className="extreme-bar bar-section" style={{ width: `${barLength * 100}%` }}></div>
+            <div className="extreme-bar bar-section" style={{ width: `${barLength * 100}%` }}>
+                {Array(Math.floor((barLength * 100) / 5))
+                    .fill(null)
+                    .map((_, idx) => (
+                        <img
+                            key={idx}
+                            src="https://1000logos.net/wp-content/uploads/2023/05/Skull-Emoji.png"
+                            alt="Skull emoji"
+                        />
+                ))}
+            </div>
 
         </div>
     );

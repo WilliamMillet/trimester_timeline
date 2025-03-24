@@ -1,12 +1,15 @@
+
+
 .main-schedule {
     width: 1200px;
     margin: auto;
-    height: 900px;
-    height: 800px;
+    min-height: 600px;
     background-color: var(--background-2);
     border-radius: var(--standard-radius);
     padding: 10px;
     display: flex;
+    margin: 0;
+    flex-direction: column;
 }
 
 .main-schedule table {
@@ -16,17 +19,32 @@
     margin-left: auto;
 }
 
-.main-schedule th,
-.main-schedule td {
-    border: 1px solid var(--border-1);
-    padding: 8px;
+.gantt-chart {
+    width: 100%;
 }
 
-.main-schedule th {
-    padding: 10px;
+.gantt-weeks {
+    display: flex;
+    width: calc(100% - 75px);
+    margin-left: 100px;
+    justify-content: space-evenly;
+    height: 60px;
+    align-items: center;
+    position: relative;
 }
 
-.main-schedule tr {
+.gantt-weeks::after {
+    content: '';
+    position: absolute;
+    width: 91%;
+    height: 1px;
+    background-color: var(--border-1);
+    top: 50px;
+
+}
+
+
+.gantt-bars {
     position: relative;
 }
 
@@ -37,36 +55,128 @@
 }
 
 .schedule-subjects-cards {
-    margin-top: 80px;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
 .gantt-bar {
-    border: 1px solid black;
-    height: 60px;
+    height: 50px;
     width: 100%;
     position: absolute;
     display: flex;
     justify-content: end;
+    cursor: pointer;
+}
+
+.gantt-bar .bar-section {
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1)
 }
 
 
 .gantt-bar .green-bar {
-    background-color: green;
+    background-color: rgb(116, 234, 116);
     border-top-left-radius: var(--standard-radius);
     border-bottom-left-radius: var(--standard-radius);
 
 }
 .gantt-bar .yellow-bar {
-    background-color: yellow;
+    background-color: rgb(244, 255, 118);
 }
 .gantt-bar .red-bar {
-    background-color: red;
+    background-color: rgb(204, 106, 106);
 }
 .gantt-bar .extreme-bar {
-    background-color: darkred;
+    background-color: grey;
     border-top-right-radius: var(--standard-radius);
     border-bottom-right-radius: var(--standard-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.course-schedule-container {
+    width: 100%;
+    display: flex;
+}
+
+.course-schedule-container .track-container {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;;
+}
+
+.course-schedule-container .track-container .track {
+    background-color: var(--background-3);
+    width: 100%;
+    height: 65px;
+    border-radius: var(--standard-radius);
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.schedule-prompt-text {
+    width: 500px
+}
+
+.dashboard-page {
+    width: 1100px;
+    margin: auto;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-page-top-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% + 130px);
+}
+
+.cooked-o-meter {
+    font-size: 30px;
+    display: flex;
+    flex-direction: column-reverse;
+    margin-left: auto;
+}
+
+.cooked-o-meter span {
+    font-size: 22px;
+    margin-top: -20px;
+}
+
+.dashboard-page .second-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.dashboard-page .second-row h2 {
+ margin: 0;
+}
+
+.cooked-label {
+    font-size: 14px;
+}
+
+
+@keyframes rotate-back-and-forth {
+    0% {
+        transform: rotate(-5deg);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
+    100% {
+        transform: rotate(-5deg);
+    }
+}
+
+.extreme-bar img {
+    width: 60px;
+    animation: rotate-back-and-forth 2s ease-in-out infinite;
 }

@@ -41,3 +41,13 @@ main {
   padding: 10px;
   background-color: var(--background-2);
 }
+
+.MuiGauge-valueText {
+  font-size: 18px;
+}
+
+.flex {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}

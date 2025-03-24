@@ -4,6 +4,7 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 const Navbar = () => {
     return ( 
@@ -27,6 +28,10 @@ const Navbar = () => {
             <Link to="/signup">
                 <PersonAddAlt1RoundedIcon />
                 <span>Signup</span>
+            </Link>
+            <Link to="/assignments">
+                <LibraryBooksIcon />
+                <span>Browse Assignments</span>
             </Link>
             
         </nav>

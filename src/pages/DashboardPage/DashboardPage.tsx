@@ -8,10 +8,12 @@ import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 const DashboardPage = () => {
     const value = 75;
 
+    const name = localStorage.getItem('name')
+
     return ( 
-        <main className="dashboard-page">
+    <main className="dashboard-page">
             <div className="dashboard-page-top-text">
-             <h1 className='schedule-prompt-text'>Good luck William, you're gonna need to hurry up...</h1>
+             <h1 className='schedule-prompt-text'>Good luck {name}, you're gonna need to hurry up...</h1>
              <div className="cooked-o-meter">
                 <span>Cooked-o-meter</span>
                 <CookedOMeter value={50}/>

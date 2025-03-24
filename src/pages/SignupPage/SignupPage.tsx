@@ -11,6 +11,9 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import "./SignupPage.css";
 import { degreeOptions } from "./degreeList";
+import useFetchData from "../../hooks/useFetchData";
+import { useNavigate } from "react-router-dom";
+
 
 // Define the form data structure using an interface
 interface SignupFormData {
@@ -42,9 +45,33 @@ const SignupPage = () => {
         event.preventDefault();
     };
 
-    // Form submission handler to post data to API
+    const navigate = useNavigate();
+
+    const signup = useFetchData();
+
     const onSubmit = async (data: SignupFormData) => {
-        
+        console.log(data)
+        signup.fetchData(`http://localhost:5000/api/users/signup`,
+            "POST",
+            {
+                contentType: 'application/json'
+            },
+            data,
+            {
+                onSuccess: () => {
+                    console.log("▶️ Saving to localStorage:", { name: data.name, zid: data.zid });
+                    localStorage.setItem("name", data.name);
+                    localStorage.setItem("zid", data.zid);
+                    navigate("/dashboard");
+                },
+                onError: (err) => {
+                    console.error("Signup error:", err);
+                },
+                onFinally: () => {
+                    console.log("Signup attempt completed");
+                },
+            }
+        )
     };
 
     return (
@@ -160,9 +187,13 @@ const SignupPage = () => {
                             helperText={errors.year?.message}
                         />
                     </div>
+                    <div className="error-box">
+                        {signup.error}
+                    </div>
                     <Button type="submit" variant="contained" sx={{ height: "50px" }}>
                         Signup
                     </Button>
+                    
                 </form>
             </section>
         </main>

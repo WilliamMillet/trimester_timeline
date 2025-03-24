@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage/LoginPage'
 import SignupPage from './pages/SignupPage/SignupPage'
 import Navbar from './components/Navbar/Navbar'
 import BrowseAssignmentsPage from './pages/BrowseAssignmentsPage/BrowseAssignmentsPage'
+import AssignmentPage from './pages/AssignmentPage/Assignment'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/assignments/:id" element={<AssignmentPage />} />
         <Route path="/assignments" element={<BrowseAssignmentsPage />} />
       </Routes>
     </>

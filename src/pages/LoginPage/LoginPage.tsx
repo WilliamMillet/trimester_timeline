@@ -8,7 +8,9 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import "./LoginPage.css"; // 
+import { useNavigate } from "react-router-dom";
+import useFetchData from "../../hooks/useFetchData";
+import "./LoginPage.css";
 
 // Define the form data structure for login
 interface LoginFormData {
@@ -24,6 +26,8 @@ const LoginPage = () => {
     } = useForm<LoginFormData>();
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const { response, error, loading, success, fetchData } = useFetchData();
+    const navigate = useNavigate();
 
     const handleClickShowPassword = () => {
         setShowPassword((prev) => !prev);
@@ -34,6 +38,29 @@ const LoginPage = () => {
     };
 
     const onSubmit = async (data: LoginFormData) => {
+        await fetchData(
+            "http://localhost:5000/api/users/login", // Adjust this to your actual login endpoint
+            "POST",
+            {
+                contentType: "application/json",
+            },
+            data,
+            {
+                onSuccess: (data) => {
+                    if (success) { // Check the success flag from useFetchData
+                        localStorage.setItem("name", data.name);
+                        localStorage.setItem("zid", data.zid);
+                        navigate("/dashboard");
+                    }
+                },
+                onError: (err) => {
+                    console.error("Login error:", err);
+                },
+                onFinally: () => {
+                    console.log("Login attempt completed");
+                },
+            }
+        );
     };
 
     return (
@@ -55,6 +82,7 @@ const LoginPage = () => {
                             id="zid"
                             label="What's your zID?"
                             variant="outlined"
+                            disabled={loading}
                             {...register("zid", {
                                 required: "zID is required",
                                 pattern: {
@@ -73,6 +101,7 @@ const LoginPage = () => {
                             label="Password"
                             type={showPassword ? "text" : "password"}
                             variant="outlined"
+                            disabled={loading}
                             {...register("password", {
                                 required: "Password is required",
                             })}
@@ -86,6 +115,7 @@ const LoginPage = () => {
                                             onClick={handleClickShowPassword}
                                             onMouseDown={handleMouseDownPassword}
                                             edge="end"
+                                            disabled={loading}
                                         >
                                             {showPassword ? <VisibilityOff /> : <Visibility />}
                                         </IconButton>
@@ -94,8 +124,16 @@ const LoginPage = () => {
                             }}
                         />
                     </div>
-                    <Button type="submit" variant="contained" sx={{ height: "50px" }}>
-                        Log In
+                    {error && (
+                        <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+                    )}
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ height: "50px" }}
+                        disabled={loading}
+                    >
+                        {loading ? "Logging in..." : "Log In"}
                     </Button>
                 </form>
             </section>

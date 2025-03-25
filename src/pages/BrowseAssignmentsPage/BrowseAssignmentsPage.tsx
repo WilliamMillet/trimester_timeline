@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Grid,
   TextField,
@@ -10,65 +10,74 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AssignmentCard from './AssignmentCard';
+import useFetchData from '../../hooks/useFetchData';
 
 interface Assignment {
   id: number;
+  courseCode: string;
   name: string;
-  subject: string;
   description: string;
-  duration: string;
+  isObsolete: number;
+  avgTimeTaken: string | null;
+  avgDueDate: string | null;
+  avgReleaseDate: string | null;
 }
-
-const assignments: Assignment[] = [
-  {
-    id: 1,
-    name: 'Caverun',
-    subject: 'COMP1511',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto, repellat!',
-    duration: '3.9 weeks',
-  },
-  {
-    id: 2,
-    name: 'Database project',
-    subject: 'COMP1234',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto, repellat!',
-    duration: '5.1 weeks',
-  },
-  {
-    id: 3,
-    name: 'Java project',
-    subject: 'COMP0101',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto, repellat!',
-    duration: '4.2 weeks',
-  },
-];
 
 const BrowseAssignmentsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('name');
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const query = useFetchData();
+
+  const camelCaseifyRows = (rows: any[]): Assignment[] => {
+    return rows.map((row: any) => {
+      const newRow: any = {};
+      Object.keys(row).forEach((key) => {
+        const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+        newRow[camelKey] = row[key];
+      });
+      return newRow as Assignment;
+    });
+  };
+
+  useEffect(() => {
+    query.fetchData('http://localhost:5000/api/assignments', 'GET', {}, null, {
+      onSuccess: (data) => {
+        if (data.data) {
+          setAssignments(camelCaseifyRows(data.data));
+        }
+      },
+      onError: (error) => {
+        console.error("Failed to fetch assignments:", error);
+      },
+    });
+  }, []);
 
   const filteredAndSortedAssignments = useMemo(() => {
     let filtered = assignments.filter((assignment) =>
       (
-        assignment.name.toLowerCase() +
-        assignment.subject.toLowerCase() +
-        assignment.description.toLowerCase()
+        (assignment.name?.toLowerCase() || '') +
+        (assignment.courseCode?.toLowerCase() || '') +
+        (assignment.description?.toLowerCase() || '')
       ).includes(searchQuery.toLowerCase())
     );
 
     filtered.sort((a, b) => {
       if (sortOption === 'name') {
-        return a.name.localeCompare(b.name);
-      } else if (sortOption === 'subject') {
-        return a.subject.localeCompare(b.subject);
-      } else if (sortOption === 'duration') {
-        return a.duration.localeCompare(b.duration);
+        return (a.name || '').localeCompare(b.name || '');
+      } else if (sortOption === 'courseCode') {
+        return (a.courseCode || '').localeCompare(b.courseCode || '');
+      } else if (sortOption === 'avgTimeTaken') {
+        // Handle null values and convert to numbers for proper numeric sorting
+        const timeA = a.avgTimeTaken ? parseFloat(a.avgTimeTaken) : -Infinity;
+        const timeB = b.avgTimeTaken ? parseFloat(b.avgTimeTaken) : -Infinity;
+        return timeA - timeB;
       }
       return 0;
     });
 
     return filtered;
-  }, [searchQuery, sortOption]);
+  }, [assignments, searchQuery, sortOption]); // Added assignments to dependencies
 
   return (
     <div style={{ padding: '20px', width: '1100px', margin: 'auto', backgroundColor: 'var(--background-1)' }}>
@@ -110,8 +119,8 @@ const BrowseAssignmentsPage: React.FC = () => {
             }}
           >
             <MenuItem value="name">Name</MenuItem>
-            <MenuItem value="subject">Subject</MenuItem>
-            <MenuItem value="duration">Duration</MenuItem>
+            <MenuItem value="courseCode">Course Code</MenuItem>
+            <MenuItem value="avgTimeTaken">Time Taken</MenuItem>
           </Select>
         </FormControl>
       </div>

@@ -1,0 +1,66 @@
+.assignment-page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    max-width: 1100px;
+    margin: auto;
+    gap: 20px;
+  }
+  
+  .assignment-page .top-row,
+  .assignment-page .second-row,
+  .assignment-page .bottom-row {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .assignment-page .top-left {
+    flex: 2;
+    height: 40px;
+    border: 1px solid black;
+  }
+  
+  .assignment-page .top-right {
+    flex: 1;
+    height: 100px;
+    border: 1px solid black;
+  }
+  
+  .assignment-page .mid-left {
+    flex: 2;
+    height: 160px;
+    border: 1px solid black;
+
+  }
+  
+  .assignment-page .spacer {
+    flex: 1;
+  }
+  
+  .assignment-page .full-row {
+    height: 490px;
+    border: 1px solid black;
+  }
+  
+  .assignment-page .bottom-left {
+    flex: 2;
+    height: 200px;
+    border: 1px solid black;
+  }
+  
+  .assignment-page .bottom-right {
+    flex: 1;
+    height: 200px;
+    border: 1px solid black;
+  }
+
+  .assignment-page .description {
+    text-align: justify
+  }
+
+.assignment-page .mid-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

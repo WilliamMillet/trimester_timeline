@@ -59,3 +59,7 @@ main {
   margin-top: 515px;
   width: 100%;
 }
+
+.error {
+  color: rgb(255, 75, 75)
+}

@@ -16,17 +16,16 @@ export const ClassContext = createContext<any>(null);
 
 const DashboardPage = () => {
    const [classData, setClassData] = useState<any>([]);
-
-    const name = localStorage.getItem('name')
+   const [message, setMessage] = useState<string>('Good Morning, William Millet')
 
     return ( 
-    <ClassContext.Provider value={{ classData, setClassData }}>
+    <ClassContext.Provider value={{ classData, setClassData, message, setMessage }}>
       <main className="dashboard-page">
                <div className="dashboard-page-top-text">
-               <h1 className='schedule-prompt-text'>Good luck {name}, you're gonna need to hurry up...</h1>
+               <h1 className='schedule-prompt-text'>{message}.</h1>
                <div className="cooked-o-meter">
                   <span>Cooked-o-meter</span>
-                  <CookedOMeter value={50}/>
+                  <CookedOMeter/>
                </div>
                </div>
                <div className="second-row">

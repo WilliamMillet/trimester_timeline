@@ -10,6 +10,7 @@ import {
     Chip,
     IconButton,
     Paper,
+    InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
@@ -18,6 +19,7 @@ import { ClassContext } from "./DashboardPage";
 interface CourseRating {
     courseCode: string;
     skillLevel: number;
+    completionPercentage?: number; // Added completion percentage
 }
 
 interface FormData {
@@ -51,8 +53,19 @@ const CourseRatingForm: React.FC = () => {
             courses: [],
         },
     });
-    const { setClassData } = useContext(ClassContext); // using context to update class data
 
+    function updateWeeksToComplete(courses: any[], completionPercentage: number): any[] {
+        const multiplier = 1 - (completionPercentage / 100) + 0.01;
+        return courses.map(course => ({
+            ...course,
+            assignments: course.assignments.map((assignment: any) => ({
+                ...assignment,
+                averageWeeksToComplete: assignment.averageWeeksToComplete * multiplier
+            }))
+        }));
+    }
+
+    const { setClassData } = useContext(ClassContext);
     const [courseTags, setCourseTags] = useState<string[]>([]);
     const courses = watch("courses", []);
 
@@ -67,7 +80,7 @@ const CourseRatingForm: React.FC = () => {
 
     const handleAddCourse = (courseCode: string | null) => {
         if (courseCode && !courses.some((course) => course.courseCode === courseCode)) {
-            setValue("courses", [...courses, { courseCode, skillLevel: 3 }]);
+            setValue("courses", [...courses, { courseCode, skillLevel: 3, completionPercentage: 0 }]);
         }
     };
 
@@ -89,6 +102,18 @@ const CourseRatingForm: React.FC = () => {
         );
     };
 
+    const handleCompletionChange = (courseCode: string, newValue: string) => {
+        const percentage = Math.min(100, Math.max(0, parseFloat(newValue) || 0));
+        setValue(
+            "courses",
+            courses.map((course) =>
+                course.courseCode === courseCode
+                    ? { ...course, completionPercentage: percentage }
+                    : course
+            )
+        );
+    };
+
     const onSubmit = (data: FormData) => {
         const courseCodes = data.courses.map((course) => course.courseCode);
         if (courseCodes?.length > 0) {
@@ -96,29 +121,35 @@ const CourseRatingForm: React.FC = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ courseCodes }),
-             })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(response.statusText);
-                }
-                return response.json();
             })
-            .then((assignmentsData) => {
-                console.log(assignmentsData)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(response.statusText);
+                    }
+                    return response.json();
+                })
+                .then((assignmentsData) => {
                     const enrichedData = assignmentsData.map((assignment: any) => {
-                        const course = courses.find((c: CourseRating) => c.courseCode === assignment.courseCode);
-                        return { ...assignment, ability: course ? course.skillLevel : null };
+                        const course = data.courses.find((c) => c.courseCode === assignment.courseCode);
+                        return { 
+                            ...assignment, 
+                            ability: course ? course.skillLevel : null,
+                        };
                     });
-                    setClassData(enrichedData);
-            })
-            .catch((error) => {
-                console.error("Error fetching assignments data:", error);
-            });
+                    
+                    // Apply completion percentage multiplier to each course
+                    const updatedData = data.courses.reduce((acc, course) => {
+                        return updateWeeksToComplete(acc, course.completionPercentage || 0);
+                    }, enrichedData);
+                    
+                    setClassData(updatedData);
+                })
+                .catch((error) => {
+                    console.error("Error fetching assignments data:", error);
+                });
         } else {
-            setClassData([])
+            setClassData([]);
         }
-
-
     };
 
     return (
@@ -169,7 +200,7 @@ const CourseRatingForm: React.FC = () => {
                         }}
                     >
                         <Chip label={course.courseCode} sx={{ mr: 2, fontWeight: 500 }} />
-                        <Box sx={{ flexGrow: 1 }}>
+                        <Box sx={{ flexGrow: 1, mr: 2 }}>
                             <Typography variant="body2" sx={{ mb: 1 }}>
                                 Your skill level
                             </Typography>
@@ -187,6 +218,33 @@ const CourseRatingForm: React.FC = () => {
                                     { value: 5, label: "Strong" },
                                 ]}
                                 valueLabelDisplay="auto"
+                            />
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "200px",
+                                mr: 2,
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Typography variant="body2" sx={{ mb: 1 }}>
+                                Completion %
+                            </Typography>
+                            <TextField
+                                type="number"
+                                value={course.completionPercentage}
+                                onChange={(e) =>
+                                    handleCompletionChange(course.courseCode, e.target.value)
+                                }
+                                variant="outlined"
+                                size="small"
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                    inputProps: { min: 0, max: 100 },
+                                }}
                             />
                         </Box>
                         <IconButton

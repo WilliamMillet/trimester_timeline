@@ -227,7 +227,6 @@ const AssignmentPage: React.FC = () => {
               variant="contained"
               color="primary"
               onClick={handleCommentSubmit}
-              disabled={!comment.trim()}
             >
               Submit
             </Button>

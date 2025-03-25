@@ -10,7 +10,8 @@
     font-size: 20px;
 }
 
-.main-navbar a {
+.main-navbar a,
+.main-navbar div {
     font-weight: bold;
     transition: all 0.2s ease-in-out;
     border-radius: var(--standard-radius);

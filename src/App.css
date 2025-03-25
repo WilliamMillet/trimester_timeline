@@ -20,6 +20,7 @@
   --color-primary-gradient-start: rgb(45, 255, 160);
   --color-primary-gradient-end: rgb(72, 255, 212);
   --border-1: #5b5862;
+  --border-0: #2f2e33;
 }
 
 body {
@@ -62,4 +63,7 @@ main {
 
 .error {
   color: rgb(255, 75, 75)
+}
+
+main {
 }

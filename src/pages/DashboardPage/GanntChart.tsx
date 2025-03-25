@@ -1,8 +1,9 @@
 import React, { useContext } from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, Tooltip, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import GanttBar from "./GanttBar";
 import { ClassContext } from "./DashboardPage";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -25,8 +26,11 @@ const GanttChart = () => {
     )
   }
 
+  const navigate = useNavigate()
+
   return (
     <div className="main-schedule">
+  
       <div className="gantt-weeks">
         {arrOfNumsZeroToTen.map((index) => (
           <div key={index}>Week {index + 1}</div>
@@ -40,13 +44,17 @@ const GanttChart = () => {
             <div className="current-time-vertical-line"></div>
               <div className="track">
                 {course.assignments.map((assignment: any) => (
-                  <GanttBar
-                    key={assignment.id}
-                    dueDate={new Date(assignment.averageDueDate)}
-                    releaseDate={new Date(assignment.averageDueDate)}
-                    avgWeeksToDo={assignment.averageWeeksToComplete}
-                    ability={course.ability}
-                  />
+                    <GanttBar
+                      key={assignment.id}
+                      dueDate={new Date(assignment.averageDueDate)}
+                      releaseDate={new Date(assignment.averageReleaseDate)}
+                      avgWeeksToDo={assignment.averageWeeksToComplete}
+                      ability={course.ability}
+                      assignmentName={assignment.name}
+                      courseCode={course.courseCode}
+                      onClick={() => navigate(`/assignments/${assignment.id}`)}
+                    />
+
                 ))}
               </div>
               <div className="track"></div>
@@ -73,22 +81,31 @@ const SubjectCardComponent = ({ subject }: SubjectCardProps) => {
     height: 150,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "flex-start",
+    position: "relative",
+  }));
+
+  const TopStripe = styled("div")(({ theme }) => ({
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: 5,
+    backgroundColor: theme.palette.primary.main,
   }));
 
   return (
     <SquareCard>
-      <CardContent>
-        <Typography variant="h6" align="left">
+      <TopStripe />
+      <CardContent style={{ paddingTop: 20, paddingLeft: '13px' }}>
+        <Typography variant="h6" align="left" sx={{ fontWeight: 'bold' }}>
           {subject}
         </Typography>
         <Typography variant="body2" align="left">
-          Assignments
+          Assignments and homework timeline
         </Typography>
-        <Typography variant="body2" align="left">
-          Homework
-        </Typography>
+
       </CardContent>
     </SquareCard>
   );

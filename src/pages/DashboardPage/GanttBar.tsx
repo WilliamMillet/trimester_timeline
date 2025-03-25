@@ -1,14 +1,25 @@
+import { Tooltip } from "@mui/material";
+
 interface GanttBarProps {
     avgWeeksToDo: number;
     dueDate: Date;
-    releaseDate?: Date;
+    releaseDate: Date;
     ability?: number;
+    courseCode: string;
+    assignmentName: string;
+    onClick: () => void;
 }
 
-const GanttBar = ({ avgWeeksToDo, dueDate, releaseDate, ability }: GanttBarProps) => {
+const GanttBar = ({ avgWeeksToDo, dueDate, releaseDate, ability, courseCode, assignmentName, onClick }: GanttBarProps) => {
     // Define Trimester 1 boundaries for 2025
     const startOfT1 = new Date(2025, 1, 17); // Feb 17, 2025
-    const endOfT1 = new Date(2025, 4, 15);   // May 15, 2025
+    const endOfT1 = new Date(2025, 3, 28);   // May 15, 2025
+
+    const mapTo2025 = (date: Date): Date => {
+        return new Date(2025, date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+      };
+
+    
 
     // Function to map a date to T1 equivalent
     const mapToT1 = (date: Date): Date => {
@@ -42,26 +53,47 @@ const GanttBar = ({ avgWeeksToDo, dueDate, releaseDate, ability }: GanttBarProps
 
         return mappedDate;
     };
+    // Calculate T1 duration in milliseconds
+    const t1Duration = endOfT1.getTime() - startOfT1.getTime();
 
     // Map dueDate and releaseDate to T1
-    const dueDateInT1 = mapToT1(dueDate);
-    const releaseDateInT1 = releaseDate ? mapToT1(releaseDate) : undefined;
+    const dueDateInT1 = mapToT1(mapTo2025(dueDate));
+    const releaseDateInT1 = mapToT1(mapTo2025(releaseDate))
 
-    const marginRight = (endOfT1.getTime() - dueDateInT1.getTime()) / 
-                       (endOfT1.getTime() - startOfT1.getTime());
-    let barLength = (avgWeeksToDo / 10) * 0.25
-    console.log(ability)
+
+    const barPixels = 1015
+
+    const marginRight = ((endOfT1.getTime() - dueDateInT1.getTime()) / t1Duration) * barPixels
+
+    let barLength = ((avgWeeksToDo / 10) * 0.25) * barPixels
+
     if (ability) {
         barLength *= (2 - 0.2 * ability)
     }
 
+
+    // Compute the offset from the start of T1 in percentage for releaseDate (if provided)
+    
+ 
+
+    const startPercentOfGreenbar = marginRight + barLength * 3
+
+
+    const releaseOffsetPercent = (releaseDateInT1.getTime() - startOfT1.getTime()) / t1Duration 
+    const endOffsetPercent = (barLength  / barPixels) * 3 + (marginRight / barPixels)
+
+
+
+    const greenBarWidthPercent = (1 - releaseOffsetPercent - endOffsetPercent) * barPixels
+
     return (
-        <div className="gantt-bar" style={{ right: `${marginRight * 100}%` }}>
-            <div className="green-bar bar-section" style={{ width: `${barLength * 100}%` }}></div>
-            <div className="yellow-bar bar-section" style={{ width: `${barLength * 100}%` }}></div>
-            <div className="red-bar bar-section" style={{ width: `${barLength * 100}%` }}></div>
-            <div className="extreme-bar bar-section" style={{ width: `${barLength * 100}%` }}>
-                {Array(Math.floor((barLength * 100) / 5))
+        <Tooltip title={`${courseCode}: ${assignmentName}`} followCursor>
+        <div className="gantt-bar" style={{ right: `${marginRight}px` }} onClick={onClick}>     
+            <div className="green-bar bar-section" style={{ width: `${greenBarWidthPercent}px` }}></div>
+            <div className="yellow-bar bar-section" style={{ width: `${barLength}px` }}></div>
+            <div className="red-bar bar-section" style={{ width: `${barLength}px` }}></div>
+            <div className="extreme-bar bar-section" style={{ width: `${barLength}px` }}>
+                {Array(Math.floor((barLength) / 50))
                     .fill(null)
                     .map((_, idx) => (
                         <img
@@ -72,6 +104,7 @@ const GanttBar = ({ avgWeeksToDo, dueDate, releaseDate, ability }: GanttBarProps
                     ))}
             </div>
         </div>
+        </Tooltip>
     );
 };
 

@@ -3,7 +3,7 @@
 .main-schedule {
     width: 1200px;
     margin: auto;
-    min-height: 600px;
+    min-height: 250px;
     background-color: var(--background-2);
     border-radius: var(--standard-radius);
     padding: 10px;
@@ -67,6 +67,7 @@
     display: flex;
     justify-content: end;
     cursor: pointer;
+    z-index: 2
 }
 
 .gantt-bar .bar-section {
@@ -106,6 +107,7 @@
     padding: 0 20px;
     display: flex;
     justify-content: space-between;;
+    position: relative;
 }
 
 .course-schedule-container .track-container .track {
@@ -192,3 +194,22 @@
     justify-content: center;
 }
 
+.empty-schedule {
+    width: calc(100% + 140px);
+    height: 100px;
+    display: flex;
+    border-radius: var(--standard-radius);
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-2);
+}
+
+.current-time-vertical-line {
+    height: 160px;
+    width: 1px;
+    left: 620px;
+    top: -10px;
+    z-index: 1;
+    background-color: var(--border-1);
+    position: absolute;
+}

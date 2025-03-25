@@ -91,12 +91,12 @@ const CourseRatingForm: React.FC = () => {
 
     const onSubmit = (data: FormData) => {
         const courseCodes = data.courses.map((course) => course.courseCode);
-
-        fetch("http://localhost:5000/courses/get-assignments-duration-data", {
+        if (courseCodes?.length > 0) {
+            fetch("http://localhost:5000/api/courses/get-assignments-duration-data", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ courseCodes }),
-        })
+             })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(response.statusText);
@@ -104,13 +104,21 @@ const CourseRatingForm: React.FC = () => {
                 return response.json();
             })
             .then((assignmentsData) => {
-                console.log("Fetched assignments data:", assignmentsData);
-                // Add the assignments data to ClassContext
-                setClassData(assignmentsData);
+                console.log(assignmentsData)
+                    const enrichedData = assignmentsData.map((assignment: any) => {
+                        const course = courses.find((c: CourseRating) => c.courseCode === assignment.courseCode);
+                        return { ...assignment, ability: course ? course.skillLevel : null };
+                    });
+                    setClassData(enrichedData);
             })
             .catch((error) => {
                 console.error("Error fetching assignments data:", error);
             });
+        } else {
+            setClassData([])
+        }
+
+
     };
 
     return (

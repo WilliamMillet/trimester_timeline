@@ -1,47 +1,29 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import GanttBar from "./GanttBar";
+import { ClassContext } from "./DashboardPage";
 
-interface GanttChartProps {
-  rows?: React.ReactNode[];
-}
 
-const GanttChart = ({ rows = [] }: GanttChartProps) => {
+
+const GanttChart = () => {
+  const { classData } = useContext(ClassContext); // Access the fetched data from context
   const arrOfNumsZeroToTen = Array.from({ length: 10 }, (_, index) => index);
 
-  // The data format that will be used
-  const data = [
-    {
-      courseCode: "COMP1511",
-      assignments: [
-        {
-          number: 1,
-          name: "",
-          startDate: "date",
-          avgWeeksToDo: 3.45,
-        },
-      ],
-    },
-  ];
+  console.log(classData)
 
-  interface GetAllTimesToCompleteProps {
-    green: number;
-    yellow: number;
-    red: number;
-    extreme: number;
+
+  if (!classData || !Array.isArray(classData)) {
+    return <div>Loading class data...</div>;
   }
 
-  const getAllTimesToComplete = (
-    avgWeeksToDo: number
-  ): GetAllTimesToCompleteProps => {
-    return {
-      green: Math.round(avgWeeksToDo * 1.25),
-      yellow: Math.round(avgWeeksToDo),
-      red: Math.round(avgWeeksToDo * 0.5),
-      extreme: Math.round(avgWeeksToDo * 0.25),
-    };
-  };
+  if (classData.length === 0) {
+    return (
+      <div className="empty-schedule">
+        Write in your class details to get started!   
+      </div>
+    )
+  }
 
   return (
     <div className="main-schedule">
@@ -50,39 +32,30 @@ const GanttChart = ({ rows = [] }: GanttChartProps) => {
           <div key={index}>Week {index + 1}</div>
         ))}
       </div>
-    <div className="schedule-subjects-cards">
-      <section className="course-schedule-container">
-        <SubjectCardComponent subject="COMM1140" />
-        <div className="track-container">
-        <div className="track">
-        <GanttBar dueDate={new Date(2025, 3, 5)} avgWeeksToDo={2} />
-        </div>
-        <div className="track"></div>
-        </div>
-      </section>
-      <section className="course-schedule-container">
-        <SubjectCardComponent subject="COMP1511" />
-        <div className="track-container">
-        <div className="track">
-          <GanttBar dueDate={new Date(2025, 2, 29)} avgWeeksToDo={3} />
-        </div>
-        <div className="track"></div>
-        </div>
-      </section>
-      <section className="course-schedule-container">
-        <SubjectCardComponent subject="MATH1131" />
-        <div className="track-container">
-        <div className="track">
-        <GanttBar dueDate={new Date(2025, 3, 5)} avgWeeksToDo={5} />
-        <GanttBar dueDate={new Date(2025, 3, 22)} avgWeeksToDo={1} />
-        </div>
-        <div className="track"></div>
-        </div>
-      </section>
-    </div>
+      <div className="schedule-subjects-cards">
+        {classData.map((course) => (
+          <section key={course.courseCode} className="course-schedule-container">
+            <SubjectCardComponent subject={course.courseCode} />
+            <div className="track-container">
+            <div className="current-time-vertical-line"></div>
+              <div className="track">
+                {course.assignments.map((assignment: any) => (
+                  <GanttBar
+                    key={assignment.id}
+                    dueDate={new Date(assignment.averageDueDate)}
+                    releaseDate={new Date(assignment.averageDueDate)}
+                    avgWeeksToDo={assignment.averageWeeksToComplete}
+                    ability={course.ability}
+                  />
+                ))}
+              </div>
+              <div className="track"></div>
+            </div>
+          </section>
+        ))}
+      </div>
       <div className="gantt-chart">
-        <div className="gantt-bars">
-        </div>
+        <div className="gantt-bars"></div>
       </div>
     </div>
   );

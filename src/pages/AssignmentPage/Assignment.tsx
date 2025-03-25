@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useFetchData from "../../hooks/useFetchData";
-import './AssignmentPage.css'
+import './AssignmentPage.css';
 import formatIsoDate from "../../utils/formatIsoDate";
 import { TextField, Button, Slider } from "@mui/material";
 import Divider from '@mui/material/Divider';
+import CommentComponent from "./Comment";
+import { BarChart } from '@mui/x-charts/BarChart';
 
 const AssignmentPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [assignment, setAssignment] = useState<any>('');
+  const [assignment, setAssignment] = useState<any>(''); // Assignment details
+  const [histogramData, setHistogramData] = useState<{ weeks: number; count: number }[]>([]); // Histogram data
   const fetchDataReturn = useFetchData();
 
-  // Existing fetch for assignment details
+  // Fetch assignment details and histogram data
   useEffect(() => {
     if (id) {
       fetchDataReturn.fetchData(
@@ -20,7 +23,10 @@ const AssignmentPage: React.FC = () => {
         {},
         null,
         {
-          onSuccess: (data) => setAssignment(data.data),
+          onSuccess: (data) => {
+            setAssignment(data.data.assignment);
+            setHistogramData(data.data.histogram); // Set histogram data from API response
+          },
         }
       );
     }
@@ -29,7 +35,7 @@ const AssignmentPage: React.FC = () => {
   // State for comment (review) content
   const [comment, setComment] = useState<string>("");
 
-  // New state for date fields and completion time slider
+  // State for date fields and completion time slider
   const [dueMonth, setDueMonth] = useState("1");
   const [dueDay, setDueDay] = useState("1");
   const [releaseMonth, setReleaseMonth] = useState("1");
@@ -39,43 +45,58 @@ const AssignmentPage: React.FC = () => {
   const handleCommentSubmit = () => {
     if (!comment.trim()) return;
 
-    // Build a review date using the release month/day (year fixed to 2025)
     const releaseDate = new Date(2025, Number(releaseMonth) - 1, Number(releaseDay));
-    // Add the completion time (in weeks converted to days)
     const reviewDate = new Date(releaseDate);
     reviewDate.setDate(releaseDate.getDate() + completionTime * 7);
     const reviewDateStr = reviewDate.toISOString().split('T')[0];
 
-    // Build the payload for the review.
-    // Note: studentId is hard-coded (e.g., 1) and is_anonymous is set to false.
     const payload = {
       studentId: localStorage.getItem('zid'),
       assignmentId: Number(id),
       content: comment,
       timeTakenInWeeks: completionTime,
       reviewDate: reviewDateStr,
-      is_anonymous: false
+      is_anonymous: false,
     };
 
-    console.log(payload)
     fetchDataReturn.fetchData(
       "http://localhost:5000/api/reviews",
       "POST",
       {},
       payload,
       {
-        onSuccess: (data) => {
-          console.log("Review submitted successfully:", data);
-          // Optionally clear form fields after a successful submission:
+        onSuccess: () => {
           setComment("");
-
+          window.location.reload();
         },
         onError: (error) => {
           console.error("Error submitting review:", error);
-        }
+        },
       }
     );
   };
+
+  const [comments, setComments] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (id) {
+      fetch(`http://localhost:5000/api/reviews/assignment/${id}`)
+        .then((response) => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
+        .then((data) => {
+          setComments(data.data);
+        })
+        .catch((error) => {
+          console.error("Comments were not successfully fetched:", error);
+        });
+    }
+  }, [id]);
+
+  // Prepare data for BarChart
+  const chartData = histogramData.map((item) => item.count); // Y-axis: count
+  const chartLabels = histogramData.map((item) => item.weeks.toString()); // X-axis: weeks
 
   return (
     <main className="assignment-page">
@@ -84,21 +105,38 @@ const AssignmentPage: React.FC = () => {
           <h1>{assignment.name}</h1>
         </div>
         <div className="top-right">
-          Completion time distribution
+          Completion Time Distribution
         </div>
       </div>
 
-      <div className="second-row">
+      <div className="second-row" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div className="mid-left">
           {fetchDataReturn.error && (
             <div className="error">Error: {fetchDataReturn.error}</div>
           )}
-          {assignment.avg_release_date && <div><strong>Average release date:</strong> {formatIsoDate(assignment.avg_release_date)}</div>}
-          {assignment.avg_due_date && <div><strong>Average due date:</strong> {formatIsoDate(assignment.avg_due_date)}</div>}
-          {assignment.is_obselete && <span><strong>This assignment is obsolete:</strong> A notification will pop up to explain what this means.</span>}
+          {assignment.avg_release_date && (
+            <div><strong>Average release date:</strong> {formatIsoDate(assignment.avg_release_date)}</div>
+          )}
+          {assignment.avg_due_date && (
+            <div><strong>Average due date:</strong> {formatIsoDate(assignment.avg_due_date)}</div>
+          )}
+          {assignment.is_obselete && (
+            <span><strong>This assignment is obsolete:</strong> A notification will pop up to explain what this means.</span>
+          )}
           <div className="description"><strong>Description:</strong> {assignment.description}</div>
         </div>
-        <div className="spacer" />
+        <div className="mid-right" style={{ width: '40%' }}>
+          {histogramData.length > 0 ? (
+            <BarChart
+              xAxis={[{ scaleType: 'band', data: chartLabels, label: 'Weeks' }]}
+              series={[{ data: chartData, color: 'var(--color-primary-1)' }]}
+              width={400}
+              height={300}
+            />
+          ) : (
+            <p>No histogram data available</p>
+          )}
+        </div>
       </div>
 
       <div className="full-row">
@@ -199,8 +237,28 @@ const AssignmentPage: React.FC = () => {
       </div>
       <Divider />
       <div className="bottom-row">
-        <div className="bottom-left" />
-        <div className="bottom-right" />
+        <div className="bottom-left">
+          <div className="comments">
+            {comments &&
+              Array.isArray(comments) &&
+              comments
+                .filter((com: any) => com.content)
+                .map((com: any) => (
+                  <CommentComponent comment={com} key={com.id} />
+                ))}
+          </div>
+        </div>
+        <div className="bottom-right">
+          <div className="durations">
+            {comments &&
+              Array.isArray(comments) &&
+              comments
+                .filter((com: any) => !com.content)
+                .map((com: any) => (
+                  <CommentComponent comment={com} key={com.id} />
+                ))}
+          </div>
+        </div>
       </div>
     </main>
   );

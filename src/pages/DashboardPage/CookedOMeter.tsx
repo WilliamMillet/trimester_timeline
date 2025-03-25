@@ -13,7 +13,7 @@ const CookedOMeter = () => {
   if (classContext.classData.length > 0) {
     classContext.setMessage(getCookedMessage(name, cookedLevel));
   } else {
-    classContext.setMessage(`Welcome back, ${name}`);
+    classContext.setMessage(`Hello, ${name}`);
   }
 
   

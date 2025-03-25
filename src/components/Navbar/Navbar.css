@@ -19,6 +19,7 @@
     display: flex;
     gap: 10px;
     align-items: center;
+    max-height: 40px;
 }
 
 .logo-icon {
@@ -28,4 +29,11 @@
 .main-navbar a:hover {
     transform: translateY(-2px);
     background-color: rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+    width: 75px;
+    filter: brightness(3);
+    margin-right: -20px;
+    overflow: hidden;
 }

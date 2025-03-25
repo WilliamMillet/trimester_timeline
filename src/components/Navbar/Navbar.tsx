@@ -1,18 +1,26 @@
-import { Link } from 'react-router-dom'
-import './Navbar.css'
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
-import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
-import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { Link, useNavigate } from "react-router-dom";
+import "./Navbar.css";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
+import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
+import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Logo from "../../assets/logo.png";
 
 const Navbar = () => {
-    const loggedIn = Boolean(localStorage.getItem('zid'))
-    return ( 
+    const loggedIn = Boolean(localStorage.getItem("zid"));
+    const navigate = useNavigate();
+
+    const handleSignOut = () => {
+        localStorage.clear();
+        navigate("/");
+    };
+
+    return (
         <nav className="main-navbar">
             <Link to="/">
-                <img src="/assets/logo.png" alt="Logo" />
+                <img src={Logo} alt="Logo" className="logo" />
                 <span>Trimester Timeline</span>
             </Link>
             <Link to="/">
@@ -24,29 +32,28 @@ const Navbar = () => {
                 <span>Dashboard</span>
             </Link>
             {loggedIn ? (
-                <div>
-                    <LogoutIcon/>
+                <div onClick={handleSignOut} style={{cursor: "pointer"}}>
+                    <LogoutIcon />
                     <span>Signout</span>
                 </div>
-                
             ) : (
                 <>
                     <Link to="/login">
-                    <LoginRoundedIcon />
-                    <span>Login</span>
-                                </Link>
-                                <Link to="/signup">
-                    <PersonAddAlt1RoundedIcon />
-                    <span>Signup</span>
-                                </Link>
-                </>)}
+                        <LoginRoundedIcon />
+                        <span>Login</span>
+                    </Link>
+                    <Link to="/signup">
+                        <PersonAddAlt1RoundedIcon />
+                        <span>Signup</span>
+                    </Link>
+                </>
+            )}
             <Link to="/assignments">
                 <LibraryBooksIcon />
                 <span>Browse Assignments</span>
             </Link>
-            
         </nav>
     );
-}
- 
+};
+
 export default Navbar;

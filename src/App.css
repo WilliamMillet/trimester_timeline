@@ -24,9 +24,8 @@
 }
 
 body {
-  background-color: var(--background-1)
+  background: radial-gradient(circle at 50% 30%, rgba(22,30,33,1) 0%, rgba(24,23,25,1) 40%);
 }
-
 a {
   text-decoration: none;
 }

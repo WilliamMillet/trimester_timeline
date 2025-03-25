@@ -8,15 +8,9 @@ import { createContext, useState } from 'react';
 
 export const ClassContext = createContext<any>(null);
 
-// Data format
-// [
-//    {courseCode: 'COMP1511', skill: 5},
-//    {courseCode: 'COMP1531', skill: 2},
-// ]
-
 const DashboardPage = () => {
    const [classData, setClassData] = useState<any>([]);
-   const [message, setMessage] = useState<string>('Good Morning, William Millet')
+   const [message, setMessage] = useState<string>('Hello, William Millet')
 
     return ( 
     <ClassContext.Provider value={{ classData, setClassData, message, setMessage }}>

@@ -7,6 +7,9 @@ import { TextField, Button, Slider } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import CommentComponent from "./Comment";
 import { BarChart } from '@mui/x-charts/BarChart';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const AssignmentPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -101,7 +104,8 @@ const AssignmentPage: React.FC = () => {
   return (
     <main className="assignment-page">
       <div className="top-row">
-        <div className="top-left">
+        <div className="top-left" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <AssignmentIcon />
           <h1>{assignment.name}</h1>
         </div>
         <div className="top-right">
@@ -114,16 +118,22 @@ const AssignmentPage: React.FC = () => {
           {fetchDataReturn.error && (
             <div className="error">Error: {fetchDataReturn.error}</div>
           )}
-          {assignment.avg_release_date && (
-            <div><strong>Average release date:</strong> {formatIsoDate(assignment.avg_release_date)}</div>
-          )}
-          {assignment.avg_due_date && (
-            <div><strong>Average due date:</strong> {formatIsoDate(assignment.avg_due_date)}</div>
-          )}
+            {assignment.avg_release_date && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <AccessTimeFilledIcon />
+              <strong>Average release date:</strong> {formatIsoDate(assignment.avg_release_date)}
+            </div>
+            )}
+            {assignment.avg_due_date && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <AccessTimeFilledIcon />
+              <strong>Average due date:</strong> {formatIsoDate(assignment.avg_due_date)}
+            </div>
+            )}
           {assignment.is_obselete && (
             <span><strong>This assignment is obsolete:</strong> A notification will pop up to explain what this means.</span>
           )}
-          <div className="description"><strong>Description:</strong> {assignment.description}</div>
+          <div className="description" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><DescriptionIcon/><strong>Description:</strong></div> <div style={{textAlign: 'justify'}}>{assignment.description}</div>
         </div>
         <div className="mid-right" style={{ width: '40%' }}>
           {histogramData.length > 0 ? (

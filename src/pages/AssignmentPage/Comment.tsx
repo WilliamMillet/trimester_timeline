@@ -145,6 +145,7 @@ const CommentComponent = ({ comment }: any) => {
               icon={<AccessTimeIcon />}
               label={`${comment.time_taken_in_weeks} weeks`}
               size="small"
+              sx={{ backgroundColor: 'var(--color-primary-1)' }}
             />
           </Tooltip>
         </Box>

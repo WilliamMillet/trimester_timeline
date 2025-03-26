@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import useFetchData from "../../hooks/useFetchData";
 import './AssignmentPage.css';
 import formatIsoDate from "../../utils/formatIsoDate";
-import { TextField, Button, Slider, Tooltip, Skeleton, Stack } from "@mui/material";
+import { TextField, Button, Slider, Tooltip, Skeleton, Stack, Switch } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import CommentComponent from "./Comment";
 import { BarChart } from '@mui/x-charts/BarChart';
@@ -60,7 +60,7 @@ const AssignmentPage: React.FC = () => {
       content: comment,
       timeTakenInWeeks: completionTime,
       reviewDate: reviewDateStr,
-      is_anonymous: false,
+      is_anonymous: isAnonymous,
     };
 
     fetchDataReturn.fetchData(
@@ -121,6 +121,8 @@ const AssignmentPage: React.FC = () => {
       );
     }
   }, [id]);
+
+  const [isAnonymous, setIsAnonymous] = useState<any>(false)
 
   // Prepare data for BarChart
   const chartData = histogramData.map((item) => item.count); // Y-axis: count
@@ -282,6 +284,14 @@ const AssignmentPage: React.FC = () => {
             >
               Submit
             </Button>
+            <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem' }}>
+              <Switch
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+                color="primary"
+              />
+              <span style={{ marginLeft: '0.5rem' }}>Post as Anonymous</span>
+            </div>
             {assignment.success && <span>Comment posted successfully</span>}
           </div>
         </div>

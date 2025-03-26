@@ -32,8 +32,8 @@
 }
 
 .logo {
-    width: 75px;
+    width: 28px;
     filter: brightness(3);
-    margin-right: -20px;
+    margin-right: 0px;
     overflow: hidden;
 }

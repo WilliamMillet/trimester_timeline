@@ -47,7 +47,7 @@ const LandingPage = () => {
         {
           title: "Course Insights & Warnings",
           icon: <SearchIcon fontSize="large" />,
-          text: "Stay informed with common assignment release dates and receive alerts if assignment details change unexpectedly."
+          text: "Stay informed with common assignment release dates and know if you need to do extra preparation."
         }
       ];
 
@@ -121,7 +121,7 @@ const LandingPage = () => {
       <div className="gray-section">
         <Box sx={{ py: 8, px: 4, textAlign: "center", width: '1250px', margin: 'auto' }}>
           <Typography variant="h4" sx={{ color: "#FFF", mb: 6 }}>
-            No more google calender, no more spreadsheets
+            Know exactly when to start an assignment
           </Typography>
           <Grid container spacing={4}>
             {features.map(({ title, icon, text }) => (

@@ -3,13 +3,14 @@ import { useParams } from "react-router-dom";
 import useFetchData from "../../hooks/useFetchData";
 import './AssignmentPage.css';
 import formatIsoDate from "../../utils/formatIsoDate";
-import { TextField, Button, Slider } from "@mui/material";
+import { TextField, Button, Slider, Tooltip, Skeleton, Stack } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import CommentComponent from "./Comment";
 import { BarChart } from '@mui/x-charts/BarChart';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import DescriptionIcon from '@mui/icons-material/Description';
+import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 
 const AssignmentPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -79,21 +80,45 @@ const AssignmentPage: React.FC = () => {
     );
   };
 
+  const [aiGen, setAiGen] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/assignments/1/summary", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then((data) => {
+        setAiGen(data.summary);
+      })
+      .catch((error) => console.error("Error fetching AI summary:", error));
+  }, []);
+
   const [comments, setComments] = useState<any[]>([]);
+
+  const aiFetch = useFetchData();
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:5000/api/reviews/assignment/${id}`)
-        .then((response) => {
-          if (!response.ok) throw new Error("Network response was not ok");
-          return response.json();
-        })
-        .then((data) => {
-          setComments(data.data);
-        })
-        .catch((error) => {
-          console.error("Comments were not successfully fetched:", error);
-        });
+      aiFetch.fetchData(
+        `http://localhost:5000/api/reviews/assignment/${id}`,
+        "GET",
+        {},
+        null,
+        {
+          onSuccess: (data) => {
+            setComments(data.data);
+          },
+          onError: (error) => {
+            console.error("Comments were not successfully fetched:", error);
+          },
+        }
+      );
     }
   }, [id]);
 
@@ -148,7 +173,24 @@ const AssignmentPage: React.FC = () => {
           )}
         </div>
       </div>
+      <div className="full-row-1">
+          <Tooltip followCursor title='Get an AI summary of the difficulty of the this course'>
+          <div className="ai-summary-title">
+            <AutoAwesomeRoundedIcon/>
+            <h2>AI summary</h2>
+          </div>
+          </Tooltip>
+          {!aiGen && !aiFetch.error && (
+            <Stack spacing={1}>
+              <Skeleton variant="rectangular" sx={{ width: "100%", height: 15, borderRadius: 10 }} />
+              <Skeleton variant="rectangular" sx={{ width: "100%", height: 15, borderRadius: 10 }} />
+              <Skeleton variant="rectangular" sx={{ width: "100%", height: 15, borderRadius: 10 }} />
+            </Stack>
+          )}  
+          {aiGen && <span className="ai-gen-text">{aiGen}</span>}
+          {aiFetch.error}
 
+      </div>
       <div className="full-row">
         <div className="add-comment">
           <h2>Add a Comment</h2>

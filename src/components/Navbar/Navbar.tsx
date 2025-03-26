@@ -27,10 +27,10 @@ const Navbar = () => {
                 <HomeRoundedIcon />
                 <span>Home</span>
             </Link>
-            <Link to="/dashboard">
+            {loggedIn && <Link to="/dashboard">
                 <DashboardRoundedIcon />
                 <span>Dashboard</span>
-            </Link>
+            </Link>}
             {loggedIn ? (
                 <div onClick={handleSignOut} style={{cursor: "pointer"}}>
                     <LogoutIcon />
@@ -48,10 +48,10 @@ const Navbar = () => {
                     </Link>
                 </>
             )}
-            <Link to="/assignments">
+            {loggedIn && <Link to="/assignments">
                 <LibraryBooksIcon />
                 <span>Browse Assignments</span>
-            </Link>
+            </Link>}
         </nav>
     );
 };

@@ -6,17 +6,16 @@ import { useContext } from "react";
 import getCookedMessage from "./getCookedMessage";
 
 const CookedOMeter = () => {
+  const classContext = useContext(ClassContext);
+  const cookedLevel = calculateCooked(classContext.classData, new Date());
+  const name = localStorage.getItem("name");
 
-  const classContext = useContext(ClassContext)
-  const cookedLevel = calculateCooked(classContext.classData, new Date())
-  const name = localStorage.getItem('name')
   if (classContext.classData.length > 0) {
     classContext.setMessage(getCookedMessage(name, cookedLevel));
   } else {
     classContext.setMessage(`Hello, ${name}`);
   }
 
-  
   return (
     <Box position="relative" display="inline-flex">
       <Gauge
@@ -26,8 +25,10 @@ const CookedOMeter = () => {
         startAngle={-90}
         endAngle={90}
         text={
-            ({ value }) => `${value} / 100`
-         }
+          classContext.classData.length > 0
+            ? ({ value }) => `${value} / 100`
+            : ' '
+        }
       />
     </Box>
   );
